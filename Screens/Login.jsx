@@ -39,6 +39,7 @@ const Login = () => {
         console.log("Password", password);
         setEmail('');
         setPassword('')
+        navigation.navigate('Home');
       }else{
         Alert.alert("⚠️ Warning","Please Enter a Valid Email ID")
       }
@@ -52,7 +53,7 @@ const Login = () => {
   }
 
   const googleSignIn=()=>{
-
+    navigation.navigate('Settings')
   }
 
   const handleEmail=(value)=>{
