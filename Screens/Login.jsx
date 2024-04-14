@@ -9,8 +9,9 @@ import {
   Button,
   Image,
   Alert,
+  ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { StackActions, useNavigation } from '@react-navigation/native';
 import { widthPercentageToDP as wp , heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import InputBox from '../Component/InputBox';
 import { background_color, black_button, gray, primary_color, secondary_color } from '../utils/Colors';
@@ -39,7 +40,8 @@ const Login = () => {
         console.log("Password", password);
         setEmail('');
         setPassword('')
-        navigation.navigate('Home');
+        // navigation.navigate('Home');
+        navigation.dispatch(StackActions.replace('Home'));
       }else{
         Alert.alert("⚠️ Warning","Please Enter a Valid Email ID")
       }
@@ -49,11 +51,11 @@ const Login = () => {
   }
 
   const createAccount=()=>{
-
+    navigation.navigate('User Registration')
   }
 
   const googleSignIn=()=>{
-    navigation.navigate('Settings')
+    navigation.navigate('Home')
   }
 
   const handleEmail=(value)=>{
@@ -73,7 +75,9 @@ const Login = () => {
 
   return (
     
-    <View style={styles.mainContainer}>
+    <ScrollView style={styles.mainContainer} contentContainerStyle={{
+      alignItems:"center",
+    }}>
       <Image source={img} style={styles.img}/>
       <Text style={styles.mainHeader}>LOCAL VIBES</Text>
       <Text style={styles.label}>Email</Text>
@@ -115,7 +119,7 @@ const Login = () => {
           <Text style={{color:secondary_color, fontSize:13}}>Create an Account</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -123,7 +127,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: primary_color,
-    alignItems:"center",
     paddingHorizontal:20
   },
   mainHeader: {
