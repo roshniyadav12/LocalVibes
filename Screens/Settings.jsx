@@ -1,15 +1,22 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button, Switch, TouchableOpacity } from 'react-native';
+import { black_button, primary_color } from '../utils/Colors';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import { setLogout } from '../Redux/authSlice';
+import { useDispatch } from 'react-redux';
 
-const Settings = () => {
+const Settings = ({navigation}) => {
+  const dispatch=useDispatch();
   const handleLogout = () => {
-    // Logic for handling logout
+    dispatch(setLogout());
+    navigation.navigate('Choice')
   };
 
   const handlePress = (setting) => {
     // Handle press based on the setting
     console.log(`Pressed ${setting}`);
   };
+  
 
   return (
     <View style={styles.container}>
@@ -58,7 +65,10 @@ const Settings = () => {
         <Text style={styles.sectionHeading}>About</Text>
       </TouchableOpacity>
 
-  
+      <TouchableOpacity style={styles.logout} onPress={handleLogout}>
+        <Text style={{color:black_button, fontSize:16, fontWeight:"600"}}>Logout</Text>
+        <MaterialIcons name='logout' size={20} color={black_button}/>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -95,6 +105,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color:'black',
   },
+
+  logout:{
+    backgroundColor:primary_color,
+    paddingVertical:10,
+    paddingHorizontal:15,
+    alignItems:"center",
+    borderRadius:10,
+    alignSelf:"center",
+    flexDirection:"row",
+    gap:10,
+    elevation:2
+  }
 });
 
 export default Settings;

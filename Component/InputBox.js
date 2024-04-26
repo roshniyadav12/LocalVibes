@@ -2,7 +2,7 @@ import { View, Text, StyleSheet ,TextInput} from 'react-native'
 import React, { useRef } from 'react'
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 
-export default function InputBox({placeholder,onChangeText, value, secureTextEntry, bordercolor, onPress, style}) {
+export default function InputBox({inputMode, placeholder,onChangeText, value, secureTextEntry, bordercolor, onPress, style, onSubmitEditing, returnKeyType, ref}) {
   const inputRef=useRef();
   return (
     <TextInput style={[styles.container, { borderColor: bordercolor }, style]} 
@@ -12,7 +12,11 @@ export default function InputBox({placeholder,onChangeText, value, secureTextEnt
     value={value}
     secureTextEntry={secureTextEntry}
     onPressIn={onPress}
-    onSubmitEditing={()=>inputRef.current.focus()}/>
+    onSubmitEditing={onSubmitEditing}
+    returnKeyType={returnKeyType}
+    ref={ref}
+    inputMode={inputMode}
+/>
   )
 }
 

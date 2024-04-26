@@ -22,7 +22,7 @@ import { setLogin } from '../Redux/authSlice';
 import axios from 'axios';
 import { active_url } from '../utils/Url';
 
-const Login = () => {
+const VendorLogin = () => {
   const navigation = useNavigation();
   const [email, setEmail]=useState('')
   const [password, setPassword]=useState('')
@@ -48,7 +48,7 @@ const Login = () => {
           email: trimmedEmail,
           password: password,
         }
-        axios.post(`${active_url}/login-Customer`, user)
+        axios.post(`${active_url}/login-Vendor`, user)
         .then(res=>{
           console.log("data",res.data)
           // Alert.alert(res.data)
@@ -57,7 +57,7 @@ const Login = () => {
             setPassword('')
             console.log(res.data.data.token)
             dispatch(setLogin({user:user, accessToken:res.data.data.token}));
-            navigation.dispatch(StackActions.replace('Home'));
+            navigation.dispatch(StackActions.replace('Vendor Home'));
           }else {
             Alert.alert("⚠️ Warning","Invalid Email or Password")
           }
@@ -80,7 +80,7 @@ const Login = () => {
   }
 
   const createAccount=()=>{
-    navigation.navigate('User Registration')
+    navigation.navigate('Vendor Registration')
   }
 
   const googleSignIn=()=>{
@@ -189,4 +189,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Login;
+export default VendorLogin;

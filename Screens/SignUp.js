@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -18,12 +18,17 @@ import { background_color, black_button, gray, primary_color, secondary_color } 
 import PrimaryButton from '../Component/PrimaryButton';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { StackActions } from '@react-navigation/native';
+import { active_url } from '../utils/Url';
+import { RadioGroup } from 'react-native-radio-buttons-group';
+import axios from 'axios';
 
 const SignUp = () => {
   const navigation = useNavigation();
+  const [name, setName]=useState('')
   const [email, setEmail]=useState('')
   const [password, setPassword]=useState('')
-  const [confrimPass, setConfirmPass]=useState('')
+  const [confirmPass, setConfirmPass]=useState('')
+  const [gender, setGender]=useState('')
 
   const isValidEmail = (email) => {
     // Regular expression for validating email
@@ -31,18 +36,63 @@ const SignUp = () => {
     return emailRegex.test(email);
 }
 
+const handleSignUp=()=>{
+  const trimmedEmail=email.toLowerCase();
+  // console.log("Type", typeof trimmedEmail)
+  const customerData={
+    name:name,
+    email:trimmedEmail,
+    password:password,
+    gender:gender
+  }
+
+  axios.post(`${active_url}/registerCustomer`,customerData)
+  .then(res=>{
+    console.log("result - ", res.data)
+    if(res.data.status==="ok"){
+      console.log("ok")
+      setEmail('');
+      setPassword('')
+      setConfirmPass('')
+      setName('')
+      setGender('')
+      Alert.alert("Registered Successfully! ✅️", "Please Login to your account");
+      navigation.navigate('Login')
+    }else{
+      const ErrorMsg=res.data.data
+      console.log(ErrorMsg)
+      Alert.alert("⚠️ Warning",ErrorMsg)
+    }
+    }
+  )
+  
+  .catch(e=>console.log(e));
+
+}
+
+
+
   const signUp=()=>{
-    if(email.trim() !== '' && password.trim() !== '' && confrimPass.trim()!==''){
-      console.log(isValidEmail(email))
+    if(email.trim() !== '' && password.trim() !== '' && confirmPass.trim()!=='' && name.trim()!=='' && gender.trim()!==''){
+      // console.log(isValidEmail(email))
       if(isValidEmail(email)===true){
-        console.log("Email", email);
-        console.log("Password", password);
-        console.log("Confirm Password", confrimPass)
-        setEmail('');
-        setPassword('')
-        setConfirmPass('')
+        if(password===confirmPass){
+          handleSignUp()
+          // console.log("name", name)
+          // console.log("gender", gender)
+          // console.log("Email", email);
+          // console.log("Password", password);
+          // console.log("Confirm Password", confirmPass)
+          // if(res.data.status==='ok'){
+            // Alert.alert("Registered Successfully!", "Please Login to your account");
+            // navigation.navigate('Login')
+          // }else{
+          //   Alert.alert(res.data)
+          // }
+        }else{
+          Alert.alert("⚠️ Error","Password not matched with confirm password")
+        }
         // navigation.navigate('Home');
-        navigation.dispatch(StackActions.replace('Home'));
       }else{
         Alert.alert("⚠️ Warning","Please Enter a Valid Email ID")
       }
@@ -59,10 +109,14 @@ const SignUp = () => {
     navigation.navigate('Home')
   }
 
-  const handleEmail=(value)=>{
+  const handleName=(value)=>{
     if(value.startsWith('')){
-      setEmail(value.trim())
+      setName(value)
     }
+  }
+
+  const handleEmail=(value)=>{
+      setEmail(value.trim());
   }
 
   const handlePassword=(value)=>{
@@ -77,7 +131,27 @@ const SignUp = () => {
     }
   }
 
-  const img=require('../Assets/loginImg.png')
+  const radioButtons = useMemo(() => ([
+    {
+        id: 'Male', // acts as primary key, should be unique and non-empty string
+        label: 'Male',
+        value: 'Male'
+    },
+    {
+        id: 'Female',
+        label: 'Female',
+        value: 'Female'
+    },
+    {
+      id: 'Other',
+      label: 'Other',
+      value: 'Other'
+    }
+]), []);
+
+
+
+  const img=require('../Assets/signup.png')
   const googleIcon=require('../Assets/search.png')
 
   return (
@@ -87,11 +161,19 @@ const SignUp = () => {
   }}>
       <Image source={img} style={styles.img}/>
       <Text style={styles.mainHeader}>LOCAL VIBES</Text>
+      <Text style={styles.label}>Name</Text>
+      <InputBox placeholder='Enter Your Name' bordercolor={background_color} style={{
+        width:wp(85),
+        marginTop:8,
+        marginBottom:12
+      }}
+      value={name}
+      onChangeText={handleName}/>
       <Text style={styles.label}>Email</Text>
       <InputBox placeholder='Enter Your Email' bordercolor={background_color} style={{
         width:wp(85),
         marginTop:8,
-        marginBottom:20
+        marginBottom:12
       }}
       value={email}
       onChangeText={handleEmail}/>
@@ -99,7 +181,7 @@ const SignUp = () => {
       <InputBox placeholder='Enter Password' bordercolor={background_color} style={{
         width:wp(85),
         marginTop:8,
-        marginBottom:20
+        marginBottom:12
       }}
       value={password}
       onChangeText={handlePassword}
@@ -108,11 +190,35 @@ const SignUp = () => {
       <InputBox placeholder='Confirm Password' bordercolor={background_color} style={{
         width:wp(85),
         marginTop:8,
-        marginBottom:20
+        marginBottom:12
       }}
-      value={confrimPass}
+      value={confirmPass}
       onChangeText={handleConfirmPass}
       secureTextEntry={true}/>
+      
+      <Text style={styles.label}>Gender</Text>
+      {/* <InputBox placeholder='Gender' bordercolor={background_color} style={{
+        width:wp(85),
+        marginTop:8,
+        marginBottom:12
+      }}
+      value={gender}
+      onChangeText={handleGender}
+      secureTextEntry={false}/> */}
+      <RadioGroup 
+            radioButtons={radioButtons} 
+            onPress={setGender}
+            selectedId={gender}
+            containerStyle={{
+              flexDirection:"row",
+              width:wp(80),
+              justifyContent:"space-around",
+              marginVertical:10
+            }}
+            labelStyle={{
+              color:black_button
+            }}
+        />
 
       <PrimaryButton text='Sign Up' style={{marginTop:20, width:200}} onPress={signUp}/>
         <View style={{flexDirection:"row", alignItems:"center", gap:10, width:wp(90), justifyContent:"center"}}>
@@ -149,7 +255,7 @@ const styles = StyleSheet.create({
     marginBottom:20,
     fontFamily:"cursive",
     fontWeight:"900",
-    marginTop:-10
+    marginTop:30
   },
   label: {
     fontSize: 18,
@@ -162,9 +268,9 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   img:{
-    height:hp(40),
-    width:wp(80),
-    marginTop:-30
+    height:hp(30),
+    width:wp(85),
+    marginTop:2
   },
   line:{
     height:1,

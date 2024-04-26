@@ -17,13 +17,20 @@ import Fontisto from 'react-native-vector-icons/Fontisto'
 import Feather from 'react-native-vector-icons/Feather'
 import VendorSignUp from '../Screens/VendorSignUp';
 import SignUp from '../Screens/SignUp';
+import { View } from 'react-native';
+import { selectAccessToken } from '../Redux/authSlice';
+import { useSelector } from 'react-redux';
+import ChoiceScreen from '../Screens/ChoiceScreen';
+import VendorLogin from '../Screens/VendorLogin';
+import VendorHome from '../Screens/VendorHome';
 
 const Stack = createStackNavigator();
 const Tab= createBottomTabNavigator();
 
 const MainTab=()=>{
   return(
-    <Tab.Navigator screenOptions={{
+    <View style={{flex:1, backgroundColor:background_color}}>
+          <Tab.Navigator screenOptions={{
       headerShown:false,
       tabBarStyle:{
         backgroundColor:primary_color,
@@ -39,7 +46,8 @@ const MainTab=()=>{
       // tabBarActiveTintColor:light_red,
       // tabBarShowLabel:false,
       tabBarInactiveTintColor:black_button,
-    }}>
+    }}
+>
       <Tab.Screen name='Home Screen' component={HomeScreen} options={{
         tabBarIcon:({ color, size }) => (<Entypo name="home" size={25} color={color} />),
         title:"Home"
@@ -57,20 +65,27 @@ const MainTab=()=>{
         tabBarIcon:({ color, size }) => (<FontAwesome name="user" size={size} color={color} />),
       }}/>
     </Tab.Navigator>
+    </View>
+
   )
 }
 
 export default function Navigation() {
+  const accessToken=useSelector(selectAccessToken);
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{
-        headerShown:false
-      }}>
+        headerShown:false,
+      }} initialRouteName={accessToken===null?'Choice':'Home'}>
+        <Stack.Screen name='Choice' component={ChoiceScreen}/>
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name='Home' component={MainTab}/>
-        <Stack.Screen name="Settings" component={Settings} />
         <Stack.Screen name='Vendor Registration' component={VendorSignUp}/>
         <Stack.Screen name='User Registration' component={SignUp}/>
+        <Stack.Screen name='Vendor Login' component={VendorLogin}/>
+        <Stack.Screen name='Home' component={MainTab}/>
+        <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen name='Vendor Home' component={VendorHome}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
